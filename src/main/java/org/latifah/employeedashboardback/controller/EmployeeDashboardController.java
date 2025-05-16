@@ -30,7 +30,7 @@ public class EmployeeDashboardController {
 
     @DeleteMapping("/delete")
     public void delete(@RequestBody ClientDeletionRequest req) {
-        boolean ok = service.deleteClient(req.clientId());
+        boolean ok = service.deleteClient(req.getClientId());
         if (!ok) {
             throw new RuntimeException("Deletion failed: client has active transactions or does not exist.");
         }

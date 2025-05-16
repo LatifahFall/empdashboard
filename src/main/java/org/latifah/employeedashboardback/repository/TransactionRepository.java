@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface TransactionRepository extends JpaRepository<Transaction, String> {
-    boolean existsByAccount_User_Id(String clientId);
-    List<Transaction> findByClientId(Long clientId);
+public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+    List<Transaction> findByUserId(Long clientId);
 }

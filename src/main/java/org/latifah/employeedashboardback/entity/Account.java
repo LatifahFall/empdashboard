@@ -6,7 +6,15 @@ import jakarta.persistence.*;
 @Table(name = "accounts")
 public class Account {
     @Id
-    private String id; // UUID
+    private String id;
+
+    @PrePersist
+    public void generateId() {
+        if (this.id == null) {
+            this.id = java.util.UUID.randomUUID().toString();
+        }
+    }
+
     private String accountNumber;
     private String type; // courant / épargne
     private double balance;

@@ -50,27 +50,40 @@ public class EnrollmentService {
 
     @Transactional
     public boolean updateClient(ClientUpdateRequest dto) {
+        // Vérifier le mot de passe du superviseur
+        final String SUPERVISOR_PASSWORD = "supervisor";
+        if (dto.getSupervisorPassword() == null || !SUPERVISOR_PASSWORD.equals(dto.getSupervisorPassword())) {
+            return false;
+        }
+
+        // Chercher le client par ID
         Optional<User> opt = userRepository.findById(dto.getClientId());
         if (opt.isEmpty()) return false;
 
-        if (!"supervisor-password".equals(dto.getSupervisorPassword())) return false;
-
+        // Mettre à jour les champs fournis
         User client = opt.get();
         if (dto.getNewFirstName() != null) client.setFirstName(dto.getNewFirstName());
         if (dto.getNewLastName() != null) client.setLastName(dto.getNewLastName());
         if (dto.getNewEmail() != null) client.setEmail(dto.getNewEmail());
         if (dto.getNewTel() != null) client.setTel(dto.getNewTel());
 
-        userRepository.save(client); // save() fonctionne pour update aussi
+        // vérifier l’état de l'objet avant sauvegarde
+        System.out.println("Client mis à jour : " + client);
+
+        // Sauvegarder les changements
+        userRepository.save(client);
+        System.out.println("🔍 SELECT à la main : " + userRepository.findById(dto.getClientId()));
+//        userRepository.flush();
         return true;
     }
+
 
     @Transactional
     public boolean deleteClient(Long clientId) {
         Optional<User> opt = userRepository.findById(clientId);
         if (opt.isEmpty()) return false;
 
-        if (!transactionRepository.findByClientId(clientId).isEmpty()) return false;
+        if (!transactionRepository.findByUserId(clientId).isEmpty()) return false;
 
         User client = opt.get();
         accountRepository.deleteByUserId(clientId); // méthode custom ou native query

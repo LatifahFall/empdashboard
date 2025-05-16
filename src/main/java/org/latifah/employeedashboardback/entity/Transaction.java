@@ -17,7 +17,7 @@ public class Transaction {
     private Account account;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "clientId")
     private User user;
 
 
