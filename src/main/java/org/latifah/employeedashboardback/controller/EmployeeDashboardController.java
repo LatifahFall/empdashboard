@@ -15,6 +15,16 @@ public class EmployeeDashboardController {
     @Autowired
     private EnrollmentService service;
 
+    @GetMapping("/clients/count")
+    public long countClients() {
+        return service.countClients();
+    }
+
+    @GetMapping("/accounts/count")
+    public long countAccounts() {
+        return service.countAccounts();
+    }
+
     @PostMapping("/enroll")
     public void enroll(@RequestBody EnrollmentRequest req) {
         service.enrollClient(req);

@@ -27,6 +27,15 @@ public class EnrollmentService {
         this.transactionRepository = transactionRepository;
     }
 
+    public long countClients() {
+        return userRepository.countClients();
+    }
+
+    public long countAccounts() {
+        return accountRepository.count();
+    }
+
+
     @Transactional
     public void enrollClient(EnrollmentRequest dto) {
         User client = new User();
