@@ -48,7 +48,7 @@ public class EmployeeDashboardController {
     // for the lists we have a simple list with just name and id à premiere vue (/clients/basic)
     //then when we click on the name we have //clients/{id} to display the client's details
     // then for the search bar it submits to /clients/search
-    //and then if the employee wants the full list of employee with all of the details displayed at
+    //and then if the employee wants the full list of clients with all of the details displayed at
     //once, it's /clients/detailed (idk if this is aesthetically pleasing tho, u choose)
 
 
