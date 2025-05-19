@@ -18,8 +18,31 @@ public class ClientService {
         this.userRepository = userRepository;
     }
 
+    public User activerServices(String clientId, List<String> services) {
+        User user = userRepository.findById(Long.valueOf(clientId))
+                .orElseThrow(() -> new RuntimeException("Client non trouvé"));
+
+        System.out.println("Client: " + user.getFirstName() + " " + user.getLastName());
+        System.out.println("Compte bloqué ? " + user.getCompteBloque());
+        System.out.println("Documents complets ? " + user.getDocumentsComplets());
+
+
+        if (!isEligible(user)) {
+            throw new RuntimeException("Client non éligible pour activation des services");
+        }
+
+        Set<String> servicesSet = new HashSet<>(user.getServicesActifs());
+        servicesSet.addAll(services);
+
+        user.setServicesActifs(new ArrayList<>(servicesSet));
+        return userRepository.save(user);
+    }
+
+    private boolean isEligible(User client) {
+        return Boolean.FALSE.equals(client.getCompteBloque()) && Boolean.TRUE.equals(client.getDocumentsComplets());
+    }
+
     public List<ClientSummaryDTO> getClientsWithAccountsAndTransactions(String role) {
-//        List<User> users = userRepository.findUsersWithAccountsByRole(role);
         List<User> users = userRepository.findUsersWithAccountsByRole(Role.CLIENT);
 
         // Test rapide pour debug
@@ -53,41 +76,42 @@ public class ClientService {
         return dtos;
     }
 
+    public List<ClientSummaryDTO> searchClientsByName(String name) {
+        Role role = Role.CLIENT;
+        List<User> users = userRepository.findUsersWithAccountsByRoleAndNameContaining(role, name);
+        return users.stream().map(ClientSummaryDTO::fromUser).toList();
+    }
+
+    public ClientSummaryDTO getClientWithDetails(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'id : " + id));
+
+        return ClientSummaryDTO.fromUser(user);
+    }
+
+    public List<ClientBasicDTO> getAllClientsBasic() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(ClientBasicDTO::fromUser)
+                .collect(Collectors.toList());
+    }
+
+    public void updateClientStatus(Long clientId, Boolean compteBloque, Boolean documentsComplets) {
+        User user = userRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Client non trouvé"));
+
+        if (compteBloque != null) {
+            user.setCompteBloque(compteBloque);
+        }
+        if (documentsComplets != null) {
+            user.setDocumentsComplets(documentsComplets);
+        }
+
+        userRepository.save(user);
+    }
 
 
-//    public List<ClientSummaryDTO> getClientsWithAccountsAndTransactions(String searchQuery) {
-//        List<User> clients = userRepository.findByRole(Role.CLIENT);
-//
-//        if (searchQuery != null) {
-//            searchQuery = searchQuery.trim().toLowerCase();
-//        }
-//
-//        List<ClientSummaryDTO> result = new ArrayList<>();
-//
-//        for (User client : clients) {
-//            String fullName = (client.getFirstName() + " " + client.getLastName()).toLowerCase();
-//            boolean matchClientName = (searchQuery == null || searchQuery.isEmpty()) || fullName.contains(searchQuery);
-//
-//            // filtrer les comptes selon searchQuery
-//            String finalSearchQuery = searchQuery;
-//            List<AccountSummaryDTO> matchingAccounts = client.getAccounts().stream()
-//                    .filter(acc -> finalSearchQuery == null || finalSearchQuery.isEmpty()
-//                            || acc.getAccountNumber().toLowerCase().contains(finalSearchQuery)
-//                            || matchClientName)
-//                    .map(acc -> {
-//                        List<TransactionDTO> txs = acc.getTransactions().stream()
-//                                .map(tx -> new TransactionDTO(tx.getId(), tx.getAmount(), tx.getDate()))
-//                                .collect(Collectors.toList());
-//                        return new AccountSummaryDTO(acc.getAccountNumber(), acc.getType(), acc.getBalance(), txs);
-//                    })
-//                    .collect(Collectors.toList());
-//
-//            if (!matchingAccounts.isEmpty() || matchClientName) {
-//                result.add(new ClientSummaryDTO(client.getId(), client.getFirstName() + " " + client.getLastName(), matchingAccounts));
-//            }
-//        }
-//
-//        return result;
-//    }
+
+
 }
 

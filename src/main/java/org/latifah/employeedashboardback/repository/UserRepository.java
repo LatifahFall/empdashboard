@@ -16,18 +16,25 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countClients();
 
     // Recherche par nom utilisateur ou numéro de compte (join avec Account)
-    @Query("SELECT DISTINCT u FROM User u " +
-            "LEFT JOIN FETCH u.accounts a " +
-            "LEFT JOIN FETCH a.transactions t " +
-            "WHERE LOWER(CONCAT(u.firstName, ' ', u.lastName)) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(a.accountNumber) LIKE LOWER(CONCAT('%', :query, '%'))")
-    List<User> searchUsersWithAccountsAndTransactions(@Param("query") String query);
+//    @Query("SELECT DISTINCT u FROM User u " +
+//            "LEFT JOIN FETCH u.accounts a " +
+//            "LEFT JOIN FETCH a.transactions t " +
+//            "WHERE LOWER(CONCAT(u.firstName, ' ', u.lastName)) LIKE LOWER(CONCAT('%', :query, '%')) " +
+//            "OR LOWER(a.accountNumber) LIKE LOWER(CONCAT('%', :query, '%'))")
+//    List<User> searchUsersWithAccountsAndTransactions(@Param("query") String query);
 
-//    List<User> findByRole(Role role);
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.accounts WHERE u.role = :role")
     List<User> findUsersWithAccountsByRole(@Param("role") Role role);
 
+    @Query("""
+    SELECT u FROM User u 
+    LEFT JOIN FETCH u.accounts 
+    WHERE u.role = :role 
+    AND (LOWER(u.firstName) LIKE LOWER(CONCAT('%', :name, '%')) 
+         OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :name, '%')))
+""")
+    List<User> findUsersWithAccountsByRoleAndNameContaining(@Param("role") Role role, @Param("name") String name);
 
 
 }

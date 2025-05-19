@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class TransactionDTO {
-    private Long transactionId;
+    private String transactionId;
     private double amount;
-    private LocalDate date;
+    private LocalDateTime date;
 
     // constructeur, getters/setters
     public TransactionDTO() {
@@ -19,10 +19,10 @@ public class TransactionDTO {
     public TransactionDTO(String id, double amount, LocalDateTime date) {
     }
 
-    public Long getTransactionId() {
+    public String getTransactionId() {
         return transactionId;
     }
-    public void setTransactionId(Long transactionId) {
+    public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
     }
     public double getAmount() {
@@ -31,10 +31,10 @@ public class TransactionDTO {
     public void setAmount(double amount) {
         this.amount = amount;
     }
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 }

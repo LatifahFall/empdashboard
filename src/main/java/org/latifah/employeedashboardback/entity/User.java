@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import org.latifah.employeedashboardback.model.Role;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,15 +36,19 @@ public class User {
     @Column(name = "role")
     private Role role;
 
-//    private boolean eligible;  // par exemple : compte actif, documents complets
+    @Column(name = "compte_bloque")
+    private Boolean compteBloque;
+    @Column(name = "documents_complets")
+    private Boolean documentsComplets;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_services", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "service")
-    private List<String> servicesActifs;
+    private List<String> servicesActifs = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Account> accounts;
+
+    public boolean isCompteBloque() { return compteBloque; }
+    public boolean isDocumentsComplets() { return documentsComplets; }
 
     public User() {
     }
@@ -102,20 +107,25 @@ public class User {
         this.role = role;
     }
 
-//    public boolean isEligible() { return eligible; }
-//    public void setEligible(boolean eligible) { this.eligible = eligible; }
-
     public List<String> getServicesActifs() { return servicesActifs; }
     public void setServicesActifs(List<String> servicesActifs) { this.servicesActifs = servicesActifs; }
 
     public List<Account> getAccounts() { return accounts; }
     public void setAccounts(List<Account> accounts) { this.accounts = accounts; }
 
+    public Boolean getCompteBloque() { return compteBloque; }
+    public void setCompteBloque(boolean compteBloque) {
+        this.compteBloque = compteBloque;
+    }
+
+    public Boolean getDocumentsComplets() { return documentsComplets; }
+    public void setDocumentsComplets(boolean documentsComplets) {
+        this.documentsComplets = documentsComplets;
+    }
 
     @Override
     public String toString() {
         return "Person{" + "id=" + id + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + ", email='" + email + '\'' + ", Tel='" + Tel + '\'' + ", Birth_Date=" + Birth_Date + ", role=" + role +
                 '}';
     }
-
 }

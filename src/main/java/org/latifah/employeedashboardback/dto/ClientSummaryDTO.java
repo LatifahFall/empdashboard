@@ -1,6 +1,9 @@
 package org.latifah.employeedashboardback.dto;
 
+import org.latifah.employeedashboardback.entity.User;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClientSummaryDTO {
     private Long clientId;
@@ -16,6 +19,39 @@ public class ClientSummaryDTO {
         this.fullName = fullName;
         this.accounts = accounts;
     }
+
+    public static ClientSummaryDTO fromUser(User user) {
+        ClientSummaryDTO dto = new ClientSummaryDTO();
+
+        dto.setClientId(user.getId());
+        dto.setFullName(user.getFirstName() + " " + user.getLastName());
+
+        dto.setAccounts(
+                user.getAccounts().stream().map(account -> {
+                    AccountSummaryDTO accDto = new AccountSummaryDTO();
+                    accDto.setAccountNumber(account.getAccountNumber());
+                    accDto.setType(account.getType());
+                    accDto.setBalance(account.getBalance());
+
+                    accDto.setTransactions(
+                            account.getTransactions().stream().map(tx -> {
+                                TransactionDTO txDto = new TransactionDTO();
+                                txDto.setTransactionId(tx.getId()); // id est un String
+                                txDto.setAmount(tx.getAmount());
+                                txDto.setDate(tx.getDate()); // date est LocalDateTime
+                                return txDto;
+                            }).collect(Collectors.toList())
+                    );
+
+                    return accDto;
+                }).collect(Collectors.toList())
+        );
+
+        return dto;
+    }
+
+
+
 
     public Long getClientId() {
         return clientId;
