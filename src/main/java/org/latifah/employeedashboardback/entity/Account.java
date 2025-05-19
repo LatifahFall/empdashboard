@@ -2,6 +2,8 @@ package org.latifah.employeedashboardback.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "accounts")
 public class Account {
@@ -22,6 +24,9 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private List<Transaction> transactions;
 
     // getters and setters
     public String getId() {
@@ -54,4 +59,6 @@ public class Account {
     public void setUser(User user) {
         this.user = user;
     }
+    public List<Transaction> getTransactions() { return transactions; }
+    public void setTransactions(List<Transaction> transactions) { this.transactions = transactions; }
 }

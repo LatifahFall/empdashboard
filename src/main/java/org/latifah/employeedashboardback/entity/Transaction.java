@@ -3,6 +3,7 @@ package org.latifah.employeedashboardback.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "transactions")
@@ -14,6 +15,7 @@ public class Transaction {
     private LocalDateTime date;
 
     @ManyToOne
+    @JoinColumn(name = "account_id")
     private Account account;
 
     @ManyToOne

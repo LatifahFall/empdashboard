@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import org.latifah.employeedashboardback.model.Role;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -33,6 +34,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
+
+//    private boolean eligible;  // par exemple : compte actif, documents complets
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_services", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "service")
+    private List<String> servicesActifs;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Account> accounts;
 
     public User() {
     }
@@ -90,6 +101,15 @@ public class User {
     public void setRole(Role role){
         this.role = role;
     }
+
+//    public boolean isEligible() { return eligible; }
+//    public void setEligible(boolean eligible) { this.eligible = eligible; }
+
+    public List<String> getServicesActifs() { return servicesActifs; }
+    public void setServicesActifs(List<String> servicesActifs) { this.servicesActifs = servicesActifs; }
+
+    public List<Account> getAccounts() { return accounts; }
+    public void setAccounts(List<Account> accounts) { this.accounts = accounts; }
 
 
     @Override
