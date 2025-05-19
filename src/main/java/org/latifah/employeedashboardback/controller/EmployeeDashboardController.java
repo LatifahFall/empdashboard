@@ -3,6 +3,7 @@ package org.latifah.employeedashboardback.controller;
 import org.latifah.employeedashboardback.dto.*;
 import org.latifah.employeedashboardback.entity.SuspendedService;
 import org.latifah.employeedashboardback.entity.User;
+import org.latifah.employeedashboardback.model.BankService;
 import org.latifah.employeedashboardback.repository.SuspendedServiceRepository;
 import org.latifah.employeedashboardback.repository.UserRepository;
 import org.latifah.employeedashboardback.service.ClientService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -121,12 +123,15 @@ public class EmployeeDashboardController {
     }
 
     //endpoint pour la suspension d'un client
+    //BankService est un enum donc en front on aura une liste dépliante to select from
     //exemple d'entree:
-    //{
-    //  "servicesToSuspend": ["virements"],
-    //  "reason": "non-paiement",
-    //  "notificationMessage": "Vos virements et chéquier sont suspendus pour non-paiement."
-    //}
+//    {
+//        "clientId": 1,
+//            "servicesToSuspend": ["VIREMENT", "CHEQUIER"],
+//        "reason": "Non-paiement",
+//            "notificationMessage": "Vos services sont suspendus pour non-paiement"
+//    }
+
     @PutMapping("/clients/{id}/suspend-services")
     public ResponseEntity<String> suspendServices(
             @PathVariable("id") Long id,
@@ -139,9 +144,9 @@ public class EmployeeDashboardController {
 
         User user = userOptional.get();
 
-        for (String service : request.getServicesToSuspend()) {
+        for (BankService service : request.getServicesToSuspend()) {
             SuspendedService suspended = new SuspendedService();
-            suspended.setServiceName(service);
+            suspended.setServiceName(service.name()); // On enregistre le nom de l'enum en base
             suspended.setReason(request.getReason());
             suspended.setNotificationMessage(request.getNotificationMessage());
             suspended.setUser(user);
@@ -153,4 +158,51 @@ public class EmployeeDashboardController {
 
         return ResponseEntity.ok("Services suspendus avec succès");
     }
+
+
+    //réactive un service desactivé
+    //   exemple d'entree:
+    //["VIREMENT", "CHEQUIER"]
+    @PutMapping("/clients/{id}/reactivate-services")
+    public ResponseEntity<String> reactivateServices(
+            @PathVariable("id") Long id,
+            @RequestBody List<String> servicesToReactivate) {
+
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé");
+        }
+
+        User user = userOptional.get();
+
+        // Convertir les chaînes en enums de manière sûre
+        List<BankService> validServices = servicesToReactivate.stream()
+                .filter(Objects::nonNull)
+                .map(String::toUpperCase)
+                .filter(name -> {
+                    try {
+                        BankService.valueOf(name);
+                        return true;
+                    } catch (IllegalArgumentException e) {
+                        return false;
+                    }
+                })
+                .map(BankService::valueOf)
+                .toList();
+
+        List<SuspendedService> currentSuspended = user.getSuspendedServices();
+        List<SuspendedService> toRemove = currentSuspended.stream()
+                .filter(s -> validServices.contains(s.getServiceName()))
+                .toList();
+
+        currentSuspended.removeAll(toRemove);
+        suspendedServiceRepository.deleteAll(toRemove);
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Services réactivés avec succès");
+    }
+
+
+
 }

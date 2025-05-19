@@ -1,6 +1,7 @@
 package org.latifah.employeedashboardback.entity;
 
 import jakarta.persistence.*;
+import org.latifah.employeedashboardback.model.BankService;
 
 import java.time.LocalDate;
 
@@ -11,7 +12,10 @@ public class SuspendedService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String serviceName;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "service_name")
+    private BankService serviceName;
+
 
     private String reason;
 
@@ -32,9 +36,9 @@ public class SuspendedService {
         return id;
     }
     public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+        this.serviceName = BankService.valueOf(serviceName);
     }
-    public String getServiceName() {
+    public BankService getServiceName() {
         return serviceName;
     }
     public void setReason(String reason) {

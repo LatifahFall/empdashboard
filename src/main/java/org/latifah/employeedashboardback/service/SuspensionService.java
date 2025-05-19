@@ -19,25 +19,5 @@ public class SuspensionService {
         this.userRepository = userRepository;
         this.suspendedServiceRepository = suspendedServiceRepository;
     }
-
-    public void suspendServices(ServiceSuspensionRequest request) {
-        User user = userRepository.findById(request.getClientId())
-                .orElseThrow(() -> new RuntimeException("Client non trouvé"));
-
-        for (String service : request.getServicesToSuspend()) {
-            SuspendedService suspendedService = new SuspendedService();
-            suspendedService.setUser(user);
-            suspendedService.setServiceName(service);
-            suspendedService.setReason(request.getReason());
-            suspendedService.setNotificationMessage(request.getNotificationMessage());
-            suspendedServiceRepository.save(suspendedService);
-        }
-
-        //notification logic ici
-    }
-
-    public List<SuspendedService> getSuspendedServices(Long clientId) {
-        return suspendedServiceRepository.findByUserId(clientId);
-    }
 }
 

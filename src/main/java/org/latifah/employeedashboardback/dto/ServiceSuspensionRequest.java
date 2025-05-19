@@ -1,10 +1,11 @@
 package org.latifah.employeedashboardback.dto;
 
 import java.util.List;
+import org.latifah.employeedashboardback.model.BankService;
 
 public class ServiceSuspensionRequest {
     private Long clientId;
-    private List<String> servicesToSuspend;
+    private List<BankService> servicesToSuspend;
     private String reason;
     private String notificationMessage;
 
@@ -15,10 +16,10 @@ public class ServiceSuspensionRequest {
     public void setClientId(Long clientId) {
         this.clientId = clientId;
     }
-    public List<String> getServicesToSuspend() {
+    public List<BankService> getServicesToSuspend() {
         return servicesToSuspend;
     }
-    public void setServicesToSuspend(List<String> servicesToSuspend) {
+        public void setServicesToSuspend(List<BankService> servicesToSuspend) {
         this.servicesToSuspend = servicesToSuspend;
     }
     public String getReason() {
