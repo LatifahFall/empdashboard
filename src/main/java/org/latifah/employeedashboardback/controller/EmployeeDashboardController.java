@@ -45,6 +45,13 @@ public class EmployeeDashboardController {
         return service.countAccounts();
     }
 
+    // for the lists we have a simple list with just name and id à premiere vue (/clients/basic)
+    //then when we click on the name we have //clients/{id} to display the client's details
+    // then for the search bar it submits to /clients/search
+    //and then if the employee wants the full list of employee with all of the details displayed at
+    //once, it's /clients/detailed (idk if this is aesthetically pleasing tho, u choose)
+
+
     //endpoint for the simple list of all clients
     @GetMapping("/clients/basic")
     public List<ClientBasicDTO> listClientsBasic() {
@@ -109,7 +116,7 @@ public class EmployeeDashboardController {
     //exemple d'entree
 //    {
 //        "clientId": "3",
-//            "services": ["virements", "acces_en_ligne"]
+//            "services": ["VIREMENT", "CHEQUIER"]
 //    }
     //NB il faut que l'admin ajoute la liste des services ou bien que ca soit un enum
     @PostMapping("/clients/activer-services")
@@ -131,7 +138,6 @@ public class EmployeeDashboardController {
 //        "reason": "Non-paiement",
 //            "notificationMessage": "Vos services sont suspendus pour non-paiement"
 //    }
-
     @PutMapping("/clients/{id}/suspend-services")
     public ResponseEntity<String> suspendServices(
             @PathVariable("id") Long id,
