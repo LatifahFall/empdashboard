@@ -50,6 +50,10 @@ public class User {
     public boolean isCompteBloque() { return compteBloque; }
     public boolean isDocumentsComplets() { return documentsComplets; }
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<SuspendedService> suspendedServices = new ArrayList<>();
+
+
     public User() {
     }
 
@@ -121,6 +125,14 @@ public class User {
     public Boolean getDocumentsComplets() { return documentsComplets; }
     public void setDocumentsComplets(boolean documentsComplets) {
         this.documentsComplets = documentsComplets;
+    }
+
+    public List<SuspendedService> getSuspendedServices() {
+        return suspendedServices;
+    }
+
+    public void setSuspendedServices(List<SuspendedService> suspendedServices) {
+        this.suspendedServices = suspendedServices;
     }
 
     @Override

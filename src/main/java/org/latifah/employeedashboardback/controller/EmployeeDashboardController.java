@@ -1,15 +1,20 @@
 package org.latifah.employeedashboardback.controller;
 
 import org.latifah.employeedashboardback.dto.*;
+import org.latifah.employeedashboardback.entity.SuspendedService;
 import org.latifah.employeedashboardback.entity.User;
+import org.latifah.employeedashboardback.repository.SuspendedServiceRepository;
+import org.latifah.employeedashboardback.repository.UserRepository;
 import org.latifah.employeedashboardback.service.ClientService;
 import org.latifah.employeedashboardback.service.EnrollmentService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/employee")
@@ -20,6 +25,13 @@ public class EmployeeDashboardController {
 
     @Autowired
     private ClientService clientService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private SuspendedServiceRepository suspendedServiceRepository;
+
 
     @GetMapping("/clients/count")
     public long countClients() {
@@ -92,6 +104,12 @@ public class EmployeeDashboardController {
     }
 
     //endpoint pour activer un service donné
+    //exemple d'entree
+//    {
+//        "clientId": "3",
+//            "services": ["virements", "acces_en_ligne"]
+//    }
+    //NB il faut que l'admin ajoute la liste des services ou bien que ca soit un enum
     @PostMapping("/clients/activer-services")
     public ResponseEntity<?> activerServicesPourClient(@RequestBody ActivateServicesRequest request) {
         try {
@@ -102,4 +120,37 @@ public class EmployeeDashboardController {
         }
     }
 
+    //endpoint pour la suspension d'un client
+    //exemple d'entree:
+    //{
+    //  "servicesToSuspend": ["virements"],
+    //  "reason": "non-paiement",
+    //  "notificationMessage": "Vos virements et chéquier sont suspendus pour non-paiement."
+    //}
+    @PutMapping("/clients/{id}/suspend-services")
+    public ResponseEntity<String> suspendServices(
+            @PathVariable("id") Long id,
+            @RequestBody ServiceSuspensionRequest request) {
+
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé");
+        }
+
+        User user = userOptional.get();
+
+        for (String service : request.getServicesToSuspend()) {
+            SuspendedService suspended = new SuspendedService();
+            suspended.setServiceName(service);
+            suspended.setReason(request.getReason());
+            suspended.setNotificationMessage(request.getNotificationMessage());
+            suspended.setUser(user);
+
+            user.getSuspendedServices().add(suspended);
+        }
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Services suspendus avec succès");
+    }
 }
