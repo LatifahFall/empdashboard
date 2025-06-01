@@ -9,8 +9,10 @@ public class ClientSummaryDTO {
     private Long clientId;
     private String fullName;
     private List<AccountSummaryDTO> accounts;
+    private Boolean compteBloque;
+    private Boolean documentsComplets;
 
-    // constructeur, getters/setters
+    // constructeurs, getters/setters
     public ClientSummaryDTO() {
         super();
     }
@@ -51,8 +53,6 @@ public class ClientSummaryDTO {
     }
 
 
-
-
     public Long getClientId() {
         return clientId;
     }
@@ -70,5 +70,18 @@ public class ClientSummaryDTO {
     }
     public void setAccounts(List<AccountSummaryDTO> accounts) {
         this.accounts = accounts;
+    }
+
+    public Boolean getCompteBloque() {
+        return compteBloque;
+    }
+    public void setCompteBloque(Boolean compteBloque) {
+        this.compteBloque = compteBloque;
+    }
+    public Boolean getDocumentsComplets() {
+        return documentsComplets;
+    }
+    public void setDocumentsComplets(Boolean documentsComplets) {
+        this.documentsComplets = documentsComplets;
     }
 }

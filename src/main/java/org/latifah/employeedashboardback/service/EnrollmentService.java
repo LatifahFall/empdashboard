@@ -35,6 +35,11 @@ public class EnrollmentService {
         return accountRepository.count();
     }
 
+    private static final String SUPERVISOR_CODE = "supervisor";
+
+    public boolean validateSupervisor(String code) {
+        return SUPERVISOR_CODE.equals(code);
+    }
 
     @Transactional
     public void enrollClient(EnrollmentRequest dto) {

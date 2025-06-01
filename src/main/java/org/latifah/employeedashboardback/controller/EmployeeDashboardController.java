@@ -89,12 +89,25 @@ public class EmployeeDashboardController {
         }
     }
 
+//    @DeleteMapping("/delete")
+//    public void delete(@RequestBody ClientDeletionRequest req) {
+//        boolean ok = service.deleteClient(req.getClientId());
+//        if (!ok) {
+//            throw new RuntimeException("Deletion failed: client has active transactions or does not exist.");
+//        }
+//    }
+
+    // on a changé le endpoint pour delete, maintenant, it require a supervisor password
     @DeleteMapping("/delete")
-    public void delete(@RequestBody ClientDeletionRequest req) {
+    public ResponseEntity<String> delete(@RequestBody SecureActionRequest req) {
+        if (!service.validateSupervisor(req.getSupervisorCode())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Code superviseur incorrect.");
+        }
         boolean ok = service.deleteClient(req.getClientId());
         if (!ok) {
-            throw new RuntimeException("Deletion failed: client has active transactions or does not exist.");
+            return ResponseEntity.badRequest().body("Échec de la suppression : client introuvable ou a des transactions actives.");
         }
+        return ResponseEntity.ok("Client supprimé avec succès.");
     }
 
     // Endpoint pour toggle compteBloque et documentsComplets
@@ -208,7 +221,4 @@ public class EmployeeDashboardController {
 
         return ResponseEntity.ok("Services réactivés avec succès");
     }
-
-
-
 }
