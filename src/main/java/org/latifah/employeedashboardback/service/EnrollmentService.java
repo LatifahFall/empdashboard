@@ -62,34 +62,51 @@ public class EnrollmentService {
         accountRepository.save(account);
     }
 
+//    @Transactional
+//    public boolean updateClient(ClientUpdateRequest dto) {
+//        // Vérifier le mot de passe du superviseur
+//        final String SUPERVISOR_PASSWORD = "supervisor";
+//        if (dto.getSupervisorPassword() == null || !SUPERVISOR_PASSWORD.equals(dto.getSupervisorPassword())) {
+//            return false;
+//        }
+//
+//        // Chercher le client par ID
+//        Optional<User> opt = userRepository.findById(dto.getClientId());
+//        if (opt.isEmpty()) return false;
+//
+//        // Mettre à jour les champs fournis
+//        User client = opt.get();
+//        if (dto.getNewFirstName() != null) client.setFirstName(dto.getNewFirstName());
+//        if (dto.getNewLastName() != null) client.setLastName(dto.getNewLastName());
+//        if (dto.getNewEmail() != null) client.setEmail(dto.getNewEmail());
+//        if (dto.getNewTel() != null) client.setTel(dto.getNewTel());
+//
+//        // vérifier l’état de l'objet avant sauvegarde
+//        System.out.println("Client mis à jour : " + client);
+//
+//        // Sauvegarder les changements
+//        userRepository.save(client);
+//        System.out.println("🔍 SELECT à la main : " + userRepository.findById(dto.getClientId()));
+////        userRepository.flush();
+//        return true;
+//    }
+
     @Transactional
     public boolean updateClient(ClientUpdateRequest dto) {
-        // Vérifier le mot de passe du superviseur
-        final String SUPERVISOR_PASSWORD = "supervisor";
-        if (dto.getSupervisorPassword() == null || !SUPERVISOR_PASSWORD.equals(dto.getSupervisorPassword())) {
-            return false;
-        }
-
-        // Chercher le client par ID
         Optional<User> opt = userRepository.findById(dto.getClientId());
         if (opt.isEmpty()) return false;
 
-        // Mettre à jour les champs fournis
         User client = opt.get();
+
         if (dto.getNewFirstName() != null) client.setFirstName(dto.getNewFirstName());
         if (dto.getNewLastName() != null) client.setLastName(dto.getNewLastName());
         if (dto.getNewEmail() != null) client.setEmail(dto.getNewEmail());
         if (dto.getNewTel() != null) client.setTel(dto.getNewTel());
 
-        // vérifier l’état de l'objet avant sauvegarde
-        System.out.println("Client mis à jour : " + client);
-
-        // Sauvegarder les changements
         userRepository.save(client);
-        System.out.println("🔍 SELECT à la main : " + userRepository.findById(dto.getClientId()));
-//        userRepository.flush();
         return true;
     }
+
 
 
     @Transactional

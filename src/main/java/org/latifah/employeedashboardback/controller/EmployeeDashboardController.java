@@ -81,13 +81,28 @@ public class EmployeeDashboardController {
         service.enrollClient(req);
     }
 
+//    @PutMapping("/update")
+//    public void update(@RequestBody ClientUpdateRequest req) {
+//        boolean ok = service.updateClient(req);
+//        if (!ok) {
+//            throw new RuntimeException("Update failed: invalid supervisor password or client not found.");
+//        }
+//    }
+
+    //update now requires a supervisor pw
     @PutMapping("/update")
-    public void update(@RequestBody ClientUpdateRequest req) {
+    public ResponseEntity<String> update(@RequestBody ClientUpdateRequest req) {
+        if (!service.validateSupervisor(req.getSupervisorCode())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Code superviseur incorrect.");
+        }
         boolean ok = service.updateClient(req);
         if (!ok) {
-            throw new RuntimeException("Update failed: invalid supervisor password or client not found.");
+            return ResponseEntity.badRequest().body("Échec de la mise à jour : client introuvable ou données invalides.");
         }
+        return ResponseEntity.ok("Client mis à jour avec succès.");
     }
+
+
 
 //    @DeleteMapping("/delete")
 //    public void delete(@RequestBody ClientDeletionRequest req) {

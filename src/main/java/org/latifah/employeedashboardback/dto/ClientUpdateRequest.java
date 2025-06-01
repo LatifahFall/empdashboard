@@ -1,6 +1,6 @@
 package org.latifah.employeedashboardback.dto;
 
-public class ClientUpdateRequest {
+public class ClientUpdateRequest extends SecureActionRequest{
     private Long clientId;
     private String newFirstName;
     private String newLastName;
