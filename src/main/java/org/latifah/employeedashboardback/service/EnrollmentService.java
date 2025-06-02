@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
 
 @Service
 public class EnrollmentService {
@@ -37,6 +36,37 @@ public class EnrollmentService {
         return accountRepository.count();
     }
 
+    private static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final int USERNAME_LETTERS = 3;
+    private static final int USERNAME_DIGITS = 4;
+    private static final Random RANDOM = new Random();
+
+    private String generateUniqueUsername() {
+        String username;
+        do {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < USERNAME_LETTERS; i++) {
+                sb.append(LETTERS.charAt(RANDOM.nextInt(LETTERS.length())));
+            }
+            for (int i = 0; i < USERNAME_DIGITS; i++) {
+                sb.append(RANDOM.nextInt(10));
+            }
+            username = sb.toString();
+        } while (userRepository.findByUsername(username).isPresent());
+        return username;
+    }
+    private String generateRandomPassword(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&";
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            password.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return password.toString();
+    }
+
+
+
     private static final String ACCOUNT_PREFIX = "ACC";
 
     private static final String SUPERVISOR_CODE = "supervisor";
@@ -56,6 +86,12 @@ public class EnrollmentService {
         client.setBirth_Date(LocalDate.parse(dto.getBirthDate()));
         client.setRole(Role.CLIENT);
         client.setCin(dto.getCin());
+        // Username auto-généré
+        String generatedUsername = generateUniqueUsername();
+        String generatedPassword = generateRandomPassword(8);
+
+        client.setUsername(generatedUsername);
+        client.setPassword(generatedPassword);
 
         userRepository.save(client);
 
@@ -64,7 +100,7 @@ public class EnrollmentService {
         String encryptedAccNum = EncryptionUtil.encrypt(rawAccNum);
 
         // Création du compte
-        Account account = new Account();
+        BankAccount account = new BankAccount();
         account.setRawAccountNumber(rawAccNum);
         account.setAccountNumber(encryptedAccNum); // champ chiffré
         account.setType(dto.getAccountType());
@@ -72,6 +108,9 @@ public class EnrollmentService {
         account.setUser(client);
 
         accountRepository.save(account);
+
+        System.out.println("Identifiants créés → username: " + generatedUsername + ", password: " + generatedPassword);
+
     }
 
     // Générateur de numéro de compte au format ACCXXXXXXX

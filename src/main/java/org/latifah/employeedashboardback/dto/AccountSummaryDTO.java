@@ -1,7 +1,7 @@
 package org.latifah.employeedashboardback.dto;
 
 import java.util.List;
-import org.latifah.employeedashboardback.entity.Account;
+import org.latifah.employeedashboardback.entity.BankAccount;
 import org.latifah.employeedashboardback.security.EncryptionUtil;
 
 public class AccountSummaryDTO {
@@ -31,7 +31,7 @@ public class AccountSummaryDTO {
 //    }
 
     // Static method to convert from entity to DTO
-    public static AccountSummaryDTO fromEntity(Account account) {
+    public static AccountSummaryDTO fromEntity(BankAccount account) {
         AccountSummaryDTO dto = new AccountSummaryDTO();
         dto.setAccountNumber(EncryptionUtil.decrypt(account.getAccountNumber()));
         dto.setType(account.getType());

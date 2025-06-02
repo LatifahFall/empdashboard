@@ -2,7 +2,6 @@ package org.latifah.employeedashboardback.entity;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,7 +15,7 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "account_id")
-    private Account account;
+    private BankAccount account;
 
     @ManyToOne
     @JoinColumn(name = "clientId")
@@ -48,10 +47,10 @@ public class Transaction {
     public LocalDateTime getDate() {
         return date;
     }
-    public void setAccount(Account account) {
+    public void setAccount(BankAccount account) {
         this.account = account;
     }
-    public Account getAccount() {
+    public BankAccount getAccount() {
         return account;
     }
     public void setUser(User user) {

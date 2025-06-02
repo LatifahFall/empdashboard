@@ -6,7 +6,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "accounts")
-public class Account {
+public class BankAccount {
     @Id
     private String id;
 

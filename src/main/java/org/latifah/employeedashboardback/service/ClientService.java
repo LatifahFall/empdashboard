@@ -121,7 +121,7 @@ public class ClientService {
     }
 
     public List<AccountSummaryDTO> searchAccountsByRawNumber(String query) {
-        List<Account> accounts = accountRepository.findByRawAccountNumberLike(query);
+        List<BankAccount> accounts = accountRepository.findByRawAccountNumberLike(query);
         return accounts.stream().map(account -> {
             AccountSummaryDTO dto = new AccountSummaryDTO();
             dto.setAccountNumber(account.getRawAccountNumber()); // version lisible

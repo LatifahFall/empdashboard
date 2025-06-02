@@ -13,6 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Optional<User> getUserRoleByEmail(String email);
     List<User> findByLastNameContains(String keyword);
+    Optional<User> findByUsername(String username);
 
     @Query("SELECT COUNT(u) FROM User u WHERE u.role = org.latifah.employeedashboardback.model.Role.CLIENT")
     long countClients();
