@@ -120,16 +120,16 @@ public class ClientService {
         userRepository.save(user);
     }
 
-    public List<AccountSummaryDTO> searchAccountsByRawNumber(String query) {
-        List<BankAccount> accounts = accountRepository.findByRawAccountNumberLike(query);
-        return accounts.stream().map(account -> {
-            AccountSummaryDTO dto = new AccountSummaryDTO();
-            dto.setAccountNumber(account.getRawAccountNumber()); // version lisible
-            dto.setType(account.getType());
-            dto.setBalance(account.getBalance());
-            return dto;
-        }).collect(Collectors.toList());
-    }
+//    public List<AccountSummaryDTO> searchAccountsByRawNumber(String query) {
+//        List<BankAccount> accounts = accountRepository.findByRawAccountNumberLike(query);
+//        return accounts.stream().map(account -> {
+//            AccountSummaryDTO dto = new AccountSummaryDTO();
+//            dto.setAccountNumber(account.getRawAccountNumber()); // version lisible
+//            dto.setType(account.getType());
+//            dto.setBalance(account.getBalance());
+//            return dto;
+//        }).collect(Collectors.toList());
+//    }
 
 
 

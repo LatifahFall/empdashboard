@@ -70,11 +70,11 @@ public class EmployeeDashboardController {
         return clientService.searchClientsByName(name);
     }
 
-    //recherche par numeros de comptes
-    @GetMapping("/accounts/search")
-    public List<AccountSummaryDTO> searchAccounts(@RequestParam("query") String query) {
-        return clientService.searchAccountsByRawNumber(query);
-    }
+//    //recherche par numeros de comptes
+//    @GetMapping("/accounts/search")
+//    public List<AccountSummaryDTO> searchAccounts(@RequestParam("query") String query) {
+//        return clientService.searchAccountsByRawNumber(query);
+//    }
 
     //endpoint pour afficher les details d'un client
     @GetMapping("/clients/{id}")
@@ -107,7 +107,6 @@ public class EmployeeDashboardController {
         }
         return ResponseEntity.ok("Client mis à jour avec succès.");
     }
-
 
 
 //    @DeleteMapping("/delete")

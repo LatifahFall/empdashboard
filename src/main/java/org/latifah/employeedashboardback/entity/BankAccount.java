@@ -22,9 +22,9 @@ public class BankAccount {
     private String accountNumber;
 
     // Human-readable format, for display/search
-    @Column(name = "raw_account_number", unique = true)
+    @Transient
     private String rawAccountNumber;
-    
+
 
     private String type; // courant / épargne
     private double balance;
