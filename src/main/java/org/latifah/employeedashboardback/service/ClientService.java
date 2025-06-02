@@ -22,6 +22,12 @@ public class ClientService {
         this.accountRepository = accountRepository;
     }
 
+    public List<ClientSummaryDTO> searchClientsByName(String name) {
+        Role role = Role.CLIENT;
+        List<User> users = userRepository.findUsersWithAccountsByFullName(role, name);
+        return users.stream().map(ClientSummaryDTO::fromUser).toList();
+    }
+
     public User activerServices(String clientId, List<String> services) {
         User user = userRepository.findById(Long.valueOf(clientId))
                 .orElseThrow(() -> new RuntimeException("Client non trouvé"));
@@ -80,11 +86,11 @@ public class ClientService {
         return dtos;
     }
 
-    public List<ClientSummaryDTO> searchClientsByName(String name) {
-        Role role = Role.CLIENT;
-        List<User> users = userRepository.findUsersWithAccountsByRoleAndNameContaining(role, name);
-        return users.stream().map(ClientSummaryDTO::fromUser).toList();
-    }
+//    public List<ClientSummaryDTO> searchClientsByName(String name) {
+//        Role role = Role.CLIENT;
+//        List<User> users = userRepository.findUsersWithAccountsByRoleAndNameContaining(role, name);
+//        return users.stream().map(ClientSummaryDTO::fromUser).toList();
+//    }
 
     public ClientSummaryDTO getClientWithDetails(Long id) {
         User user = userRepository.findById(id)
