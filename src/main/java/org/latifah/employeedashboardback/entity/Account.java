@@ -17,7 +17,14 @@ public class Account {
         }
     }
 
+    // champ chiffré (invisible à l’extérieur)
+    @Column(name = "accountNumber_encrypted")
     private String accountNumber;
+
+    // champ lisible, utilisé pour l’affichage et la recherche
+    @Column(name = "rawAccountNumber", unique = true)
+    private String rawAccountNumber;
+
     private String type; // courant / épargne
     private double balance;
 
@@ -61,4 +68,10 @@ public class Account {
     }
     public List<Transaction> getTransactions() { return transactions; }
     public void setTransactions(List<Transaction> transactions) { this.transactions = transactions; }
+    public String getRawAccountNumber() {
+        return rawAccountNumber;
+    }
+    public void setRawAccountNumber(String rawAccountNumber) {
+        this.rawAccountNumber = rawAccountNumber;
+    }
 }

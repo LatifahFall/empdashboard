@@ -5,11 +5,13 @@ import org.latifah.employeedashboardback.entity.*;
 import org.latifah.employeedashboardback.model.Role;
 import org.latifah.employeedashboardback.repository.*;
 
+import org.latifah.employeedashboardback.security.EncryptionUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -35,6 +37,8 @@ public class EnrollmentService {
         return accountRepository.count();
     }
 
+    private static final String ACCOUNT_PREFIX = "ACC";
+
     private static final String SUPERVISOR_CODE = "supervisor";
 
     public boolean validateSupervisor(String code) {
@@ -43,6 +47,7 @@ public class EnrollmentService {
 
     @Transactional
     public void enrollClient(EnrollmentRequest dto) {
+        // Création de l'utilisateur
         User client = new User();
         client.setFirstName(dto.getFirstName());
         client.setLastName(dto.getLastName());
@@ -53,14 +58,27 @@ public class EnrollmentService {
 
         userRepository.save(client);
 
+        // Génération du numéro lisible et chiffrement
+        String rawAccNum = generateReadableAccountNumber();
+        String encryptedAccNum = EncryptionUtil.encrypt(rawAccNum);
+
+        // Création du compte
         Account account = new Account();
-        account.setAccountNumber(UUID.randomUUID().toString());
+        account.setRawAccountNumber(rawAccNum);
+        account.setAccountNumber(encryptedAccNum); // champ chiffré
         account.setType(dto.getAccountType());
         account.setBalance(dto.getBalance());
         account.setUser(client);
 
         accountRepository.save(account);
     }
+
+    // Générateur de numéro de compte au format ACCXXXXXXX
+    private String generateReadableAccountNumber() {
+        int number = new Random().nextInt(9000000) + 1000000; // garantit 7 chiffres
+        return "ACC" + number;
+    }
+
 
 //    @Transactional
 //    public boolean updateClient(ClientUpdateRequest dto) {

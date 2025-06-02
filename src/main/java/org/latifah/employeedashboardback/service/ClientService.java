@@ -3,6 +3,7 @@ package org.latifah.employeedashboardback.service;
 import org.latifah.employeedashboardback.dto.*;
 import org.latifah.employeedashboardback.entity.*;
 import org.latifah.employeedashboardback.model.Role;
+import org.latifah.employeedashboardback.repository.AccountRepository;
 import org.latifah.employeedashboardback.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,12 @@ import java.util.stream.Collectors;
 public class ClientService {
 
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
-    public ClientService(UserRepository userRepository) {
+
+    public ClientService(UserRepository userRepository, AccountRepository accountRepository) {
         this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
     }
 
     public User activerServices(String clientId, List<String> services) {
@@ -109,6 +113,18 @@ public class ClientService {
 
         userRepository.save(user);
     }
+
+    public List<AccountSummaryDTO> searchAccountsByRawNumber(String query) {
+        List<Account> accounts = accountRepository.findByRawAccountNumberLike(query);
+        return accounts.stream().map(account -> {
+            AccountSummaryDTO dto = new AccountSummaryDTO();
+            dto.setAccountNumber(account.getRawAccountNumber()); // version lisible
+            dto.setType(account.getType());
+            dto.setBalance(account.getBalance());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
 
 
 

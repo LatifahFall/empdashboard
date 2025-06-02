@@ -1,6 +1,8 @@
 package org.latifah.employeedashboardback.dto;
 
 import java.util.List;
+import org.latifah.employeedashboardback.entity.Account;
+import org.latifah.employeedashboardback.security.EncryptionUtil;
 
 public class AccountSummaryDTO {
     private String accountNumber;
@@ -15,9 +17,28 @@ public class AccountSummaryDTO {
     public AccountSummaryDTO(String accountNumber, String type, double balance, List<TransactionDTO> transactions) {
         super();
     }
-    public String getAccountNumber() {
-        return accountNumber;
+
+//    // Déchiffré automatiquement quand on construit à partir de l'entité
+//    public static String fromEntity(Account account) {
+//        AccountSummaryDTO dto = new AccountSummaryDTO();
+//        dto.setAccountNumber(EncryptionUtil.decrypt(account.getAccountNumber()));
+//        dto.setType(account.getType());
+//        dto.setBalance(account.getBalance());
+//        return dto;
+//
+//        public String getAccountNumber() {
+//        return accountNumber;
+//    }
+
+    // Static method to convert from entity to DTO
+    public static AccountSummaryDTO fromEntity(Account account) {
+        AccountSummaryDTO dto = new AccountSummaryDTO();
+        dto.setAccountNumber(EncryptionUtil.decrypt(account.getAccountNumber()));
+        dto.setType(account.getType());
+        dto.setBalance(account.getBalance());
+        return dto;
     }
+
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
