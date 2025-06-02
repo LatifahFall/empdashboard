@@ -18,18 +18,6 @@ public class AccountSummaryDTO {
         super();
     }
 
-//    // Déchiffré automatiquement quand on construit à partir de l'entité
-//    public static String fromEntity(Account account) {
-//        AccountSummaryDTO dto = new AccountSummaryDTO();
-//        dto.setAccountNumber(EncryptionUtil.decrypt(account.getAccountNumber()));
-//        dto.setType(account.getType());
-//        dto.setBalance(account.getBalance());
-//        return dto;
-//
-//        public String getAccountNumber() {
-//        return accountNumber;
-//    }
-
     // Static method to convert from entity to DTO
     public static AccountSummaryDTO fromEntity(BankAccount account) {
         AccountSummaryDTO dto = new AccountSummaryDTO();

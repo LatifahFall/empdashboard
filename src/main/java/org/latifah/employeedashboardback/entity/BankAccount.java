@@ -17,13 +17,14 @@ public class BankAccount {
         }
     }
 
-    // champ chiffré (invisible à l’extérieur)
-    @Column(name = "accountNumber_encrypted")
+    // Encrypted, stored in DB
+    @Column(name = "accountnumber")
     private String accountNumber;
 
-    // champ lisible, utilisé pour l’affichage et la recherche
-    @Column(name = "rawAccountNumber", unique = true)
+    // Human-readable format, for display/search
+    @Column(name = "raw_account_number", unique = true)
     private String rawAccountNumber;
+    
 
     private String type; // courant / épargne
     private double balance;
