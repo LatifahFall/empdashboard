@@ -55,6 +55,7 @@ public class EnrollmentService {
         client.setTel(dto.getTel());
         client.setBirth_Date(LocalDate.parse(dto.getBirthDate()));
         client.setRole(Role.CLIENT);
+        client.setCin(dto.getCin());
 
         userRepository.save(client);
 

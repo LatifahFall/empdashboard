@@ -18,6 +18,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "cin", unique = true)
+    private String cin;
+
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
@@ -64,6 +67,9 @@ public class User {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getCin() { return cin; }
+    public void setCin(String cin) { this.cin = cin;}
 
     public String getFirstName() {
         return firstName;

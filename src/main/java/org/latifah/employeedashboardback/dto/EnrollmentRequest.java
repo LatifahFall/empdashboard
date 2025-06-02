@@ -8,6 +8,15 @@ public class EnrollmentRequest {
     private String birthDate; // format: yyyy-MM-dd
     private String accountType;
     private double balance;
+    private String cin;
+
+    public String getCin() {
+        return cin;
+    }
+    public void setCin(String cin) {
+        this.cin = cin;
+    }
+
 
     public EnrollmentRequest() {
     }
