@@ -103,6 +103,7 @@ public class EnrollmentService {
         BankAccount account = new BankAccount();
         account.setRawAccountNumber(rawAccNum);
         account.setAccountNumber(encryptedAccNum); // champ chiffré
+        account.setRib(generateRib()); // nouveau champ RIB généré
         account.setType(dto.getAccountType());
         account.setBalance(dto.getBalance());
         account.setUser(client);
@@ -119,35 +120,13 @@ public class EnrollmentService {
         return "ACC" + number;
     }
 
-
-//    @Transactional
-//    public boolean updateClient(ClientUpdateRequest dto) {
-//        // Vérifier le mot de passe du superviseur
-//        final String SUPERVISOR_PASSWORD = "supervisor";
-//        if (dto.getSupervisorPassword() == null || !SUPERVISOR_PASSWORD.equals(dto.getSupervisorPassword())) {
-//            return false;
-//        }
-//
-//        // Chercher le client par ID
-//        Optional<User> opt = userRepository.findById(dto.getClientId());
-//        if (opt.isEmpty()) return false;
-//
-//        // Mettre à jour les champs fournis
-//        User client = opt.get();
-//        if (dto.getNewFirstName() != null) client.setFirstName(dto.getNewFirstName());
-//        if (dto.getNewLastName() != null) client.setLastName(dto.getNewLastName());
-//        if (dto.getNewEmail() != null) client.setEmail(dto.getNewEmail());
-//        if (dto.getNewTel() != null) client.setTel(dto.getNewTel());
-//
-//        // vérifier l’état de l'objet avant sauvegarde
-//        System.out.println("Client mis à jour : " + client);
-//
-//        // Sauvegarder les changements
-//        userRepository.save(client);
-//        System.out.println("🔍 SELECT à la main : " + userRepository.findById(dto.getClientId()));
-////        userRepository.flush();
-//        return true;
-//    }
+    private String generateRib() {
+        String bankCode = "12345";
+        String branchCode = "67890";
+        String accountNumberPart = String.format("%011d", (long)(Math.random() * 1_000_000_000L));
+        String key = String.format("%02d", (int)(Math.random() * 100));
+        return bankCode + branchCode + accountNumberPart + key;
+    }
 
     @Transactional
     public boolean updateClient(ClientUpdateRequest dto) {
@@ -164,7 +143,6 @@ public class EnrollmentService {
         userRepository.save(client);
         return true;
     }
-
 
 
     @Transactional

@@ -25,6 +25,9 @@ public class BankAccount {
     @Transient
     private String rawAccountNumber;
 
+    @Column(name = "rib", nullable = false, unique = true)
+    private String rib;
+
 
     private String type; // courant / épargne
     private double balance;
@@ -75,4 +78,12 @@ public class BankAccount {
     public void setRawAccountNumber(String rawAccountNumber) {
         this.rawAccountNumber = rawAccountNumber;
     }
+    public String getRib() {
+        return rib;
+    }
+
+    public void setRib(String rib) {
+        this.rib = rib;
+    }
+
 }
