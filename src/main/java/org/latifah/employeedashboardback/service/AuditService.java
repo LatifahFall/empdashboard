@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -41,9 +42,10 @@ public class AuditService {
         logger.info("Test audit log saved");
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logAction(String action, String entityType, String entityId, Map<String, Object> details, boolean success) {
-        logger.info("Attempting to log action: {} - {} - {}", action, entityType, entityId);
+        logger.info("⏺️ Tentative de journalisation de l'action: [{}] sur [{}] avec ID [{}]", action, entityType, entityId);
+
         AuditLog auditLog = new AuditLog();
         auditLog.setAction(action);
         auditLog.setEntityType(entityType);
@@ -52,24 +54,35 @@ public class AuditService {
         auditLog.setTimestamp(LocalDateTime.now());
         auditLog.setSuccess(success);
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof org.springframework.security.core.userdetails.User) {
-            org.springframework.security.core.userdetails.User userDetails = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
-            User user = userService.findByEmail(userDetails.getUsername());
-            auditLog.setUser(user);
-            logger.debug("User found for audit log: {}", user != null ? user.getEmail() : "null");
-        } else {
-            logger.warn("No authenticated user found for audit log: {}", action);
-        }
-
         try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated()) {
+                Object principal = auth.getPrincipal();
+                if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
+                    User user = userService.findByEmail(userDetails.getUsername());
+                    if (user != null) {
+                        auditLog.setUser(user);
+                        logger.debug("👤 Utilisateur trouvé : {}", user.getEmail());
+                    } else {
+                        logger.warn("⚠️ Utilisateur non trouvé pour l'email : {}", userDetails.getUsername());
+                    }
+                } else {
+                    logger.warn("⚠️ Principal inattendu dans le contexte de sécurité : {}", principal.getClass().getName());
+                }
+            } else {
+                logger.warn("⚠️ Aucun utilisateur authentifié pour l'action : {}", action);
+            }
+
             auditLogRepository.saveAndFlush(auditLog);
-            logger.info("Audit log saved: {} - {} - {} - Success: {}", action, entityType, entityId, success);
+            logger.info("✅ Journal d'audit sauvegardé avec succès : Action=[{}], Entité=[{}], ID=[{}], Succès=[{}]",
+                    action, entityType, entityId, success);
         } catch (Exception e) {
-            logger.error("Failed to save audit log: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to save audit log", e);
+            logger.error("❌ Erreur lors de la sauvegarde du journal d'audit pour Action=[{}], Entité=[{}], ID=[{}] : {}",
+                    action, entityType, entityId, e.getMessage(), e);
+            throw new RuntimeException("Échec de la sauvegarde du journal d'audit", e);
         }
     }
+
 
     private String mapToJson(Map<String, Object> details) {
         if (details == null || details.isEmpty()) return "{}";
